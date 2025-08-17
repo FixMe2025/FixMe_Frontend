@@ -3,12 +3,11 @@
 
 import type { JSX } from 'react';
 import CopyButton from './CopyButton';
-import HighlightedText from './HighlightedText';
-import type { SpellResponse } from '../../types/spellcheck';
+import type { PipelineRunResponse } from '@/types/pipeline';
 
 type Props = {
   /** 검사 결과 (없으면 플레이스홀더 출력) */
-  result: SpellResponse | null;
+  result: PipelineRunResponse | null;
   /** 'loading'일 때는 로딩 안내 화면 표시 */
   mode: 'loading' | null;
   /** 에러 메시지 (선택) */
@@ -25,6 +24,9 @@ export default function DiffViewer(props: Props): JSX.Element {
     heightClass = 'h-[800px]',
   } = props;
 
+  const hasCorrections: boolean =
+    !!result && Array.isArray(result.corrections) && result.corrections.length > 0;
+
   return (
     <div
       className={[
@@ -35,11 +37,15 @@ export default function DiffViewer(props: Props): JSX.Element {
     >
       {/* 헤더 */}
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-semibold">{mode === 'loading' ? '로딩 페이지' : '교정 결과'}</h3>
-        {result && mode !== 'loading' ? <CopyButton text={result.corrected_text} /> : null}
+        <h3 className="font-semibold">
+          {mode === 'loading' ? '로딩 페이지' : '교정 결과'}
+        </h3>
+        {result && mode !== 'loading' ? (
+          <CopyButton text={result.corrected_text} />
+        ) : null}
       </div>
 
-      {/* 에러 라인 (로딩 UI는 요구대로 제거) */}
+      {/* 에러 라인 */}
       <div className="h-5 text-sm text-red-600">{error ?? ''}</div>
 
       {/* 콘텐츠 */}
@@ -50,16 +56,45 @@ export default function DiffViewer(props: Props): JSX.Element {
           </div>
         ) : result ? (
           <div className="space-y-6">
-            {/* 1) 오류 하이라이트(원문 기준) */}
+            {/* 1) 원문 */}
             <section>
-              <div className="mb-1 text-sm text-gray-500">오류 하이라이트(원문)</div>
-              <HighlightedText text={result.original_text} errors={result.errors ?? []} />
+              <div className="mb-1 text-sm text-gray-500">원문</div>
+              <div className="whitespace-pre-wrap leading-7">
+                {result.original_text}
+              </div>
             </section>
 
             {/* 2) 교정문 */}
             <section>
               <div className="mb-1 text-sm text-gray-500">교정문</div>
-              <div className="whitespace-pre-wrap leading-7">{result.corrected_text}</div>
+              <div className="whitespace-pre-wrap leading-7">
+                {result.corrected_text}
+              </div>
+            </section>
+
+            {/* 3) 교정 목록 */}
+            <section>
+              <div className="mb-1 text-sm text-gray-500">
+                교정 목록{hasCorrections ? ` (${result.corrections.length})` : ''}
+              </div>
+              {hasCorrections ? (
+                <ul className="list-disc pl-6 text-sm">
+                  {result.corrections.map((c, idx): JSX.Element => (
+                    <li key={idx} className="mb-1">
+                      <span className="rounded bg-gray-100 px-1 py-0.5 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                        {c.type}
+                      </span>{' '}
+                      <span className="line-through decoration-red-500">{c.original}</span>
+                      {'  →  '}
+                      <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                        {c.corrected}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-sm text-gray-500">교정이 필요하지 않았습니다.</div>
+              )}
             </section>
           </div>
         ) : (
