@@ -6,8 +6,6 @@ Next.js(App Router)로 만든 한국어 맞춤법/띄어쓰기 검사기 UI입�
 
 ## 📸 스크린샷 (Screenshots)
 
-> 이미지는 저장소의 `./docs/` 폴더에 넣고, 파일명만 맞춰 사용하세요.
-
 <p align="center">
   <img src="./docs/screen-main.png" width="49%" alt="메인 화면 — 입력(왼쪽), 실행 화살표(가운데), 결과 패널(오른쪽)" />
   <img src="./docs/screen-sampleinput.png" width="49%" alt="입력 화면 — 300자 이하 텍스트" />
