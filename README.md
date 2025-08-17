@@ -15,11 +15,6 @@ Next.js(App Router)로 만든 한국어 맞춤법/띄어쓰기 검사기 UI입�
   <img src="./docs/screen-loading_minigame.png" width="49%" alt="로딩 화면 - 미니 게임, 완료까지의 시간 표시" />
 </p>
 
-<figure>
-  <img src="./docs/screen-loading.png" alt="전체 페이지 로딩 — Lottie + 미니게임" />
-  <figcaption align="center">전체 페이지 로딩 화면 — Lottie 로더와 미니게임으로 대기 시간 UX 제공</figcaption>
-</figure>
-
 ---
 
 ## 🚀 Tech Stack
