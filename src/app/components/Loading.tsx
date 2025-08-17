@@ -1,8 +1,7 @@
 // src/app/components/Loading.tsx
 'use client';
 
-import type { JSX } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type JSX, type CSSProperties } from 'react';
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react';
 import MiniGame from './MiniGame';
 
@@ -50,29 +49,29 @@ export default function Loading(props: LoadingProps): JSX.Element {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
   // /public 경로에서 Lottie JSON 로드 (src 사용 시)
-  useEffect((): void | (() => void) => {
+  useEffect(() => {
     if (animationData || !src) return;
-    let cancelled = false;
-    (async (): Promise<void> => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    (async () => {
       try {
-        const res = await fetch(src);
+        const res = await fetch(src, { signal });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: unknown = await res.json();
-        if (!cancelled) {
-          if (isRecord(data)) setJson(data);
-          else setErr('잘못된 Lottie JSON');
-        }
+        if (isRecord(data)) setJson(data);
+        else setErr('잘못된 Lottie JSON');
       } catch (e: unknown) {
+        if ((e as { name?: string }).name === 'AbortError') return;
         setErr(e instanceof Error ? e.message : '로딩 실패');
       }
     })();
-    return (): void => {
-      cancelled = true;
-    };
+
+    return () => controller.abort();
   }, [src, animationData]);
 
   // 재생 속도 적용
-  useEffect((): void => {
+  useEffect(() => {
     try {
       lottieRef.current?.setSpeed(speed);
     } catch {
@@ -80,11 +79,11 @@ export default function Loading(props: LoadingProps): JSX.Element {
     }
   }, [speed]);
 
-  const style = useMemo<React.CSSProperties>(() => ({ height, width }), [height, width]);
+  const style = useMemo<CSSProperties>(() => ({ height, width }), [height, width]);
 
   return (
     <div className={['rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900', className].join(' ')}>
-      {/* 상단: Lottie + 라벨 (퍼센트/프로그레스바 제거됨) */}
+      {/* 상단: Lottie + 라벨 */}
       <div className="flex flex-col items-center">
         {json ? (
           <Lottie lottieRef={lottieRef} animationData={json} loop={loop} autoplay style={style} />
@@ -93,10 +92,18 @@ export default function Loading(props: LoadingProps): JSX.Element {
         ) : (
           <div className="text-sm text-gray-500">애니메이션 불러오는 중…</div>
         )}
-        {label ? <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">{label}</div> : null}
+        {label ? (
+          <div
+            className="mt-2 text-xs text-gray-500 dark:text-gray-400"
+            role="status"
+            aria-live="polite"
+          >
+            {label}
+          </div>
+        ) : null}
       </div>
 
-      {/* 하단: 미니게임(축약형) */}
+      {/* 하단: 미니게임 */}
       {showGame && (
         <div className="mt-6">
           <MiniGame
