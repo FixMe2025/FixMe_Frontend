@@ -4,6 +4,22 @@ Next.js(App Router)로 만든 한국어 맞춤법/띄어쓰기 검사기 UI입�
 왼쪽 입력 → 가운데 화살표 클릭 시 검사 실행 → 오른쪽 결과 패널에서 오류 하이라이트+툴팁, 교정문, 비교 보기를 제공합니다.
 검사 대기 중에는 전체 페이지 로딩 화면(Lottie + 미니게임)을 표시합니다.
 
+## 📸 스크린샷 (Screenshots)
+
+> 이미지는 저장소의 `./docs/` 폴더에 넣고, 파일명만 맞춰 사용하세요.
+
+<p align="center">
+  <img src="./docs/screen-main.png" width="49%" alt="메인 화면 — 입력(왼쪽), 실행 화살표(가운데), 결과 패널(오른쪽)" />
+  <img src="./docs/screen-sampleinput.png" width="49%" alt="입력 화면 — 300자 이하 텍스트" />
+  <img src="./docs/screen-result.png" width="49%" alt="결과 화면 — 오류 하이라이트, 교정문, 비교 보기" />
+  <img src="./docs/screen-loading.png" width="49%" alt="로딩 화면 - 미니 게임, 완료까지의 시간 표시" />
+</p>
+
+<figure>
+  <img src="./docs/screen-loading.png" alt="전체 페이지 로딩 — Lottie + 미니게임" />
+  <figcaption align="center">전체 페이지 로딩 화면 — Lottie 로더와 미니게임으로 대기 시간 UX 제공</figcaption>
+</figure>
+
 ---
 
 ## 🚀 Tech Stack
