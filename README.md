@@ -12,7 +12,7 @@ Next.js(App Router)로 만든 한국어 맞춤법/띄어쓰기 검사기 UI입�
   <img src="./docs/screen-main.png" width="49%" alt="메인 화면 — 입력(왼쪽), 실행 화살표(가운데), 결과 패널(오른쪽)" />
   <img src="./docs/screen-sampleinput.png" width="49%" alt="입력 화면 — 300자 이하 텍스트" />
   <img src="./docs/screen-result.png" width="49%" alt="결과 화면 — 오류 하이라이트, 교정문, 비교 보기" />
-  <img src="./docs/screen-loading.png" width="49%" alt="로딩 화면 - 미니 게임, 완료까지의 시간 표시" />
+  <img src="./docs/screen-loading_minigame.png" width="49%" alt="로딩 화면 - 미니 게임, 완료까지의 시간 표시" />
 </p>
 
 <figure>
