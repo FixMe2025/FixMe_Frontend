@@ -1,7 +1,9 @@
-// src/lib/api.ts
+// 백엔드 API 호출을 담당하는 유틸리티 함수 모음
 import type { PipelineRunResponse } from "@/types/pipeline";
 
-const BASE: string = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const BASE: string = typeof window === 'undefined' 
+  ? 'http://backend:8000' 
+  : process.env.NEXT_PUBLIC_API_BASE_URL || '';
 const USE_MOCK: boolean =
   process.env.NEXT_PUBLIC_USE_MOCK === "1" || BASE.trim() === "";
 
@@ -26,7 +28,7 @@ export async function pipelineRun(text: string): Promise<PipelineRunResponse> {
   const res = await fetch(`${BASE}/api/v1/pipeline/run`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ original_text: text }),
+    body: JSON.stringify({ text: text }),
   });
 
   console.log("📥 [프론트] 응답 수신 상태:", res.status);

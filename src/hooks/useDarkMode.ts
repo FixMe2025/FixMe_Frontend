@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+// 다크 모드 상태를 관리하는 커스텀 훅
 const STORAGE_KEY = 'theme';
 
 function getPreferredTheme(): 'dark' | 'light' {

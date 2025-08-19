@@ -2,6 +2,7 @@
 
 import type { JSX } from 'react';
 
+// 텍스트를 클립보드에 복사하는 버튼 컴포넌트
 type Props = { text: string; onCopied?: () => void };
 
 export default function CopyButton(props: Props): JSX.Element {

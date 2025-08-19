@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import type { JSX } from 'react';
 import Script from 'next/script';
 
+// 모든 페이지에 공통으로 적용되는 루트 레이아웃 컴포넌트
+
 export const metadata: Metadata = {
   title: '한국어 맞춤법 · 띄어쓰기 검사기',
   description: 'Next.js + TypeScript + Tailwind v4',

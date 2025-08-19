@@ -1,3 +1,5 @@
+// 파이프라인 API에서 사용하는 타입 정의
+
 // 요청 타입
 export interface PipelineRunRequest {
   text: string;

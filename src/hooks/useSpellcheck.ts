@@ -1,21 +1,23 @@
 'use client';
 
 import { useCallback, useMemo, useReducer } from 'react';
-import { spellcheck } from '../lib/api';
-import type { SpellResponse } from '../types/spellcheck';
+import { pipelineRun } from '../lib/api';
+import type { PipelineRunResponse } from '../types/pipeline';
+
+// 맞춤법 검사 API를 호출하고 상태를 관리하는 커스텀 훅
 
 type State = {
   text: string;
-  result: SpellResponse | null;
+  result: PipelineRunResponse | null;
   loading: boolean;
   error: string | null;
-  history: ReadonlyArray<SpellResponse>;
+  history: ReadonlyArray<PipelineRunResponse>;
 };
 
 type Action =
   | { type: 'SET_TEXT'; payload: string }
   | { type: 'START' }
-  | { type: 'SUCCESS'; payload: SpellResponse }
+  | { type: 'SUCCESS'; payload: PipelineRunResponse }
   | { type: 'FAIL'; payload: string }
   | { type: 'CLEAR' };
 
@@ -35,10 +37,7 @@ function reducer(state: State, action: Action): State {
       return { ...state, loading: false, result: action.payload, history: [action.payload, ...state.history].slice(0, 20) };
     case 'FAIL': return { ...state, loading: false, error: action.payload };
     case 'CLEAR': return { ...state, text: '', result: null, error: null };
-    default: {
-      const _exhaustive: never = action; // exhaustive check
-      return state;
-    }
+    default: return state;
   }
 }
 
@@ -50,10 +49,10 @@ function getErrorMessage(err: unknown): string {
 
 export function useSpellcheck(): {
   text: string;
-  result: SpellResponse | null;
+  result: PipelineRunResponse | null;
   loading: boolean;
   error: string | null;
-  history: ReadonlyArray<SpellResponse>;
+  history: ReadonlyArray<PipelineRunResponse>;
   setText: (v: string) => void;
   run: () => Promise<void>;
   clear: () => void;
@@ -67,7 +66,7 @@ export function useSpellcheck(): {
     }
     dispatch({ type: 'START' });
     try {
-      const data: SpellResponse = await spellcheck(state.text);
+      const data: PipelineRunResponse = await pipelineRun(state.text);
       dispatch({ type: 'SUCCESS', payload: data });
     } catch (e: unknown) {
       dispatch({ type: 'FAIL', payload: getErrorMessage(e) });

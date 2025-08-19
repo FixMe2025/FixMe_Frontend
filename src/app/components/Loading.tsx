@@ -1,4 +1,4 @@
-// src/app/components/Loading.tsx
+// 로딩 화면과 미니게임을 표시하는 컴포넌트
 'use client';
 
 import { useEffect, useMemo, useRef, useState, type JSX, type CSSProperties } from 'react';

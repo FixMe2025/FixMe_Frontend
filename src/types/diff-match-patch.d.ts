@@ -1,3 +1,4 @@
+// diff-match-patch 라이브러리를 위한 타입 선언
 declare module 'diff-match-patch' {
   export const DIFF_DELETE: -1;
   export const DIFF_EQUAL: 0;

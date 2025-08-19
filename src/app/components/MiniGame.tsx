@@ -1,4 +1,4 @@
-// src/app/components/MiniGame.tsx
+// 간단한 클릭 챌린지 미니게임 컴포넌트
 'use client';
 
 import type { JSX } from 'react';

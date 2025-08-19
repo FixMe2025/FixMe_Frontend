@@ -1,4 +1,4 @@
-// src/app/components/ThemeToggle.tsx
+// 다크/라이트 테마 전환 버튼 컴포넌트
 'use client';
 
 import type { JSX } from 'react';

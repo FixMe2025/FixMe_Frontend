@@ -1,91 +1,83 @@
-// src/app/components/HighlightedText.tsx
 'use client';
 
 import { useMemo } from 'react';
 import type { JSX } from 'react';
 import Tooltip from './Tooltip';
-import type { SpellError } from '../../types/spellcheck';
+import type { Correction } from '../../types/pipeline';
+
+// 교정된 단어를 하이라이트하여 보여주는 컴포넌트
 
 type Props = {
   text: string;
-  errors: ReadonlyArray<SpellError> | null;
+  corrections: ReadonlyArray<Correction>;
 };
 
-function styleFor(type: SpellError['type']): string {
-  switch (type) {
-    case 'spelling':
-      return 'bg-red-100 dark:bg-red-300/30 underline decoration-red-500 decoration-wavy';
-    case 'spacing':
-      return 'bg-yellow-100 dark:bg-yellow-300/30 underline decoration-dotted';
-    case 'grammar':
-      return 'bg-blue-100 dark:bg-blue-300/30 underline decoration-blue-500';
-    case 'recommendation':
-      return 'bg-emerald-100 dark:bg-emerald-300/30';
-    case 'etc':
-    default:
-      return 'bg-gray-200 dark:bg-gray-700';
+function styleFor(type: Correction['type']): string {
+  // A simple style mapping based on correction type.
+  // You can expand this with more specific types from your backend.
+  if (type.includes('spelling') || type.includes('typo')) {
+    return 'bg-red-100 dark:bg-red-300/30 underline decoration-red-500 decoration-wavy';
   }
+  if (type.includes('spacing')) {
+    return 'bg-yellow-100 dark:bg-yellow-300/30 underline decoration-dotted';
+  }
+  if (type.includes('grammar')) {
+    return 'bg-blue-100 dark:bg-blue-300/30 underline decoration-blue-500';
+  }
+  return 'bg-emerald-100 dark:bg-emerald-300/30'; // Default for recommendations/etc.
 }
 
-export default function HighlightedText({ text, errors }: Props): JSX.Element {
+export default function HighlightedText({ text, corrections }: Props): JSX.Element {
   const parts = useMemo<JSX.Element[]>(() => {
-    const list: ReadonlyArray<SpellError> = Array.isArray(errors) ? errors : [];
-    const len: number = text.length;
+    if (!corrections || corrections.length === 0) {
+      return [<span key="full-text">{text}</span>];
+    }
 
-    // offset 기준 정렬
-    const sorted: SpellError[] = [...list].sort((a, b) => a.offset - b.offset);
+    // Create a map of original words to their corrections for easier lookup.
+    const correctionMap = new Map<string, Correction>();
+    corrections.forEach(c => correctionMap.set(c.original, c));
 
     const out: JSX.Element[] = [];
-    let cursor = 0;
+    let lastIndex = 0;
 
-    for (let i = 0; i < sorted.length; i += 1) {
-      const e = sorted[i];
+    // Find all occurrences of the original words and create highlighted parts.
+    // This is a simplified approach. For overlapping or complex cases, a more robust algorithm is needed.
+    const regex = new RegExp(corrections.map(c => c.original).join('|'), 'g');
+    let match;
 
-      // 범위 보정/검증
-      const start: number = Math.max(0, Math.min(len, e.offset));
-      const end: number = Math.max(start, Math.min(len, e.offset + e.length));
+    while ((match = regex.exec(text)) !== null) {
+      const originalWord = match[0];
+      const correction = correctionMap.get(originalWord);
+      if (!correction) continue;
 
-      if (start >= end) continue;           // 빈 범위
-      if (start < cursor) continue;         // 겹치면 스킵(중복 방지)
-
-      // 정상 텍스트
-      if (cursor < start) {
-        out.push(
-          <span key={`t-${cursor}-${start}`}>{text.slice(cursor, start)}</span>
-        );
+      // Add the text before the match
+      if (match.index > lastIndex) {
+        out.push(<span key={`text-${lastIndex}`}>{text.slice(lastIndex, match.index)}</span>);
       }
 
-      // 오류 구간 하이라이트 (+툴팁)
-      const piece: string = text.slice(start, end);
-      const tooltip: string =
-        e.suggestion && e.suggestion.length > 0
-          ? `제안: ${e.suggestion}\n${e.message}`
-          : e.message;
+      const tooltip = `제안: ${correction.corrected}`;
 
+      // Add the highlighted part
       out.push(
-        <Tooltip key={`e-${start}-${end}`} content={tooltip} side="top">
+        <Tooltip key={`corr-${match.index}`} content={tooltip} side="top">
           <mark
             title={tooltip}
-            className={[
-              'rounded-[3px] px-0.5 cursor-help',
-              styleFor(e.type),
-            ].join(' ')}
+            className={['rounded-[3px] px-0.5 cursor-help', styleFor(correction.type)].join(' ')}
           >
-            {piece}
+            {originalWord}
           </mark>
         </Tooltip>
       );
-
-      cursor = end;
+      lastIndex = regex.lastIndex;
     }
 
-    // 남은 꼬리
-    if (cursor < len) {
-      out.push(<span key={`t-${cursor}-end`}>{text.slice(cursor)}</span>);
+    // Add any remaining text after the last match
+    if (lastIndex < text.length) {
+      out.push(<span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>);
     }
 
     return out;
-  }, [text, errors]);
+  }, [text, corrections]);
 
   return (
     <div className="whitespace-pre-wrap leading-7">

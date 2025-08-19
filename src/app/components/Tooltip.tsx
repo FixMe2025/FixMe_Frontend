@@ -1,4 +1,4 @@
-// src/app/components/Tooltip.tsx
+// 간단한 툴팁 UI 컴포넌트
 import type { JSX, ReactNode } from 'react';
 
 type TooltipProps = {

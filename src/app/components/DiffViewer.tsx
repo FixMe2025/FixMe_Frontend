@@ -1,4 +1,4 @@
-// src/app/components/DiffViewer.tsx
+// 교정 결과를 표시하는 Diff 뷰어 컴포넌트
 'use client';
 
 import type { JSX } from 'react';

@@ -1,4 +1,4 @@
-// src/app/page.tsx
+// 메인 페이지 컴포넌트
 'use client';
 
 import type { JSX } from 'react';

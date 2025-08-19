@@ -3,6 +3,8 @@
 import type { JSX } from 'react';
 import { useCallback } from 'react';
 
+// 사용자 입력을 받는 텍스트 영역 컴포넌트
+
 type Props = {
   value: string;
   onChange: (v: string) => void;
